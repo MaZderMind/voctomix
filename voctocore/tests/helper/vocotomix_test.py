@@ -1,8 +1,8 @@
 import unittest
 import gi.repository
-import lib.config
 from mock import MagicMock
 
+import lib.config
 from tests.helper.config_mock import ConfigMock
 
 gi.repository.Gst = MagicMock()
