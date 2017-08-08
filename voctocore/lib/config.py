@@ -11,26 +11,30 @@ class VocConfigParser(SafeConfigParser):
         return [x.strip() for x in self.get(section, option).split(',')]
 
 
-files = [
-    os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                 '../default-config.ini'),
-    os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                 '../config.ini'),
-    '/etc/voctomix/voctocore.ini',
-    '/etc/voctomix.ini',  # deprecated
-    '/etc/voctocore.ini',
-    os.path.expanduser('~/.voctomix.ini'),  # deprecated
-    os.path.expanduser('~/.voctocore.ini'),
-]
+Config = None
 
-if Args.ini_file is not None:
-    files.append(Args.ini_file)
+def load():
+    global Config
+    files = [
+        os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                     '../default-config.ini'),
+        os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                     '../config.ini'),
+        '/etc/voctomix/voctocore.ini',
+        '/etc/voctomix.ini',  # deprecated
+        '/etc/voctocore.ini',
+        os.path.expanduser('~/.voctomix.ini'),  # deprecated
+        os.path.expanduser('~/.voctocore.ini'),
+    ]
 
-Config = VocConfigParser()
-readfiles = Config.read(files)
+    if Args.ini_file is not None:
+        files.append(Args.ini_file)
 
-log = logging.getLogger('ConfigParser')
-log.debug('considered config-files: \n%s',
-          "\n".join(["\t\t" + os.path.normpath(file) for file in files]))
-log.debug('successfully parsed config-files: \n%s',
-          "\n".join(["\t\t" + os.path.normpath(file) for file in readfiles]))
+    Config = VocConfigParser()
+    readfiles = Config.read(files)
+
+    log = logging.getLogger('ConfigParser')
+    log.debug('considered config-files: \n%s',
+              "\n".join(["\t\t" + os.path.normpath(file) for file in files]))
+    log.debug('successfully parsed config-files: \n%s',
+              "\n".join(["\t\t" + os.path.normpath(file) for file in readfiles]))
