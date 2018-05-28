@@ -1,0 +1,29 @@
+# start with `screen -c example.screenrc`
+
+# don't display the copyright page
+startup_message off
+
+# increase scrollback buffer size
+defscrollback 10000
+
+# title of the session
+sessionname tracker-scripts
+
+# status-line
+hardstatus alwayslastline
+hardstatus string '%{= kG}%-Lw%{= kW}%50> %n%f* %t%{= kG}%+Lw%< %{= kG}'
+
+screen -t voctocore            sh -c 'while true; do ./voctocore/voctocore.py -vv -i ./example-scripts/example-config.ini; sleep 5; done'
+screen -t voctogui             sh -c 'while true; do ./voctogui/voctogui.py -vv; sleep 5; done'
+
+screen -t bgloop               sh -c 'while true; do ./example-scripts/ffmpeg/source-background-loop.sh; sleep 5; done'
+
+screen -t cam1                 sh -c 'while true; do ./example-scripts/ffmpeg/source-testvideo-as-cam1.sh; sleep 5; done'
+screen -t cam2                 sh -c 'while true; do ./example-scripts/ffmpeg/source-testvideo-as-cam2.sh; sleep 5; done'
+screen -t cam3                 sh -c 'while true; do ./example-scripts/ffmpeg/source-testvideo-as-cam3.sh; sleep 5; done'
+screen -t slides               sh -c 'while true; do ./example-scripts/ffmpeg/source-testvideo-as-slides.sh; sleep 5; done'
+
+screen -t pause-loop           sh -c 'while true; do ./example-scripts/ffmpeg/source-nostream-pause-loop.sh; sleep 5; done'
+screen -t pause-music          sh -c 'while true; do ./example-scripts/ffmpeg/source-nostream-music.sh; sleep 5; done'
+
+screen -t htop                 htop
