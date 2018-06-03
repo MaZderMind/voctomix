@@ -21,6 +21,7 @@ class MiscToolbarController(object):
 
         cutbtn = uibuilder.find_widget_recursive(toolbar, 'cut')
         cutbtn.set_visible(Config.getboolean('misc', 'cut'))
+        cutbtn.set_label("Cut (T)")
         cutbtn.connect('clicked', self.on_cutbtn_clicked)
 
         key, mod = Gtk.accelerator_parse('t')

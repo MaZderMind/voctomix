@@ -48,7 +48,7 @@ class CompositionToolbarController(object):
         )
         btn.set_name(name)
 
-        btn.set_label(btn.get_label() + "\n%s" % accel_key)
+        btn.set_label(btn.get_label() + " (%s)" % accel_key)
 
         tooltip = Gtk.accelerator_get_label(key, mod)
         btn.set_tooltip_text(tooltip)
