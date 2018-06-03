@@ -4,6 +4,7 @@ from gi.repository import Gtk
 import lib.connection as Connection
 
 from lib.config import Config
+from lib.videomixcontroller import VideoMixController
 
 
 class CompositionToolbarController(object):
@@ -56,7 +57,7 @@ class CompositionToolbarController(object):
         # Thanks to http://stackoverflow.com/a/19739855/1659732
         btn.get_child().add_accelerator('clicked', self.accelerators,
                                         key, mod, Gtk.AccelFlags.VISIBLE)
-        btn.connect('toggled', self.on_btn_toggled)
+        btn.connect('clicked', self.on_btn_toggled)
 
         self.composite_btns[name] = btn
 
@@ -65,14 +66,9 @@ class CompositionToolbarController(object):
             return
 
         btn_name = btn.get_name()
-        self.log.info('btn_name = %s', btn_name)
-        if self.current_composition == btn_name:
-            self.log.info('composition-mode already active: %s', btn_name)
-            return
-
         self.log.info('composition-mode activated: %s', btn_name)
-
-        Connection.send('set_composite_mode', btn_name)
+        VideoMixController.composite_mode = btn_name
+        VideoMixController.apply()
 
     def on_composite_mode_and_video_status(self, mode, source_a, source_b):
         self.log.info('composite_mode_and_video_status callback w/ '

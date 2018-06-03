@@ -9,6 +9,7 @@ from lib.videodisplay import VideoDisplay
 import lib.connection as Connection
 
 from lib.config import Config
+from lib.videomixcontroller import VideoMixController
 
 
 class VideoPreviewsController(object):
@@ -27,7 +28,7 @@ class VideoPreviewsController(object):
         self.b_btns = {}
         self.volume_sliders = {}
 
-        self.current_source = {'a': None, 'b': None}
+        VideoMixController.register_clear_handler(self.clear_video_selection)
 
         try:
             width = Config.getint('previews', 'width')
@@ -133,10 +134,10 @@ class VideoPreviewsController(object):
 
         channel, idx = btn_name.split(' ')[:2]
         if idx == '-':
-            self.current_source[channel] = None
+            VideoMixController.set_source_for_channel(channel, None)
         else:
             source_name = self.sources[int(idx)]
-            self.current_source[channel] = source_name
+            VideoMixController.set_source_for_channel(channel, source_name)
 
         # self.log.info('video-channel %s changed to %s', channel, source_name)
         # Connection.send('set_video_' + channel, source_name)
@@ -148,6 +149,7 @@ class VideoPreviewsController(object):
         volume = 10 ** (value / 20) if value > -20.0 else 0
         self.log.debug("slider_changed: {}: {:.4f}".format(source, volume))
         Connection.send('set_audio_volume {} {:.4f}'.format(source, volume))
+
     #
     # def on_video_status(self, source_a, source_b):
     #     self.log.info('on_video_status callback w/ sources: %s and %s',
@@ -177,16 +179,17 @@ class VideoPreviewsController(object):
             pressed_key = event.keyval - Gdk.KEY_1
             self.select_video(pressed_key)
         elif event.keyval == Gdk.KEY_Escape:
-            self.clear_video_selection()
+            VideoMixController.clear()
 
     def select_video(self, idx):
         source_name = self.sources[idx]
 
-        if self.current_source['a'] is None:
+        if VideoMixController.video_a is None:
             self.a_btns[source_name].set_active(True)
-        elif self.current_source['b'] is None:
+        elif VideoMixController.video_b is None:
             self.b_btns[source_name].set_active(True)
 
     def clear_video_selection(self):
+        self.log.info("clear_video_selection")
         self.hidden_btn_group_a.set_active(True)
         self.hidden_btn_group_b.set_active(True)
