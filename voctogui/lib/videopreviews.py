@@ -178,6 +178,9 @@ class VideoPreviewsController(object):
         if Gdk.KEY_1 <= event.keyval <= Gdk.KEY_9:
             pressed_key = event.keyval - Gdk.KEY_1
             self.select_video(pressed_key)
+        elif Gdk.KEY_KP_0 <= event.keyval <= Gdk.KEY_KP_9:
+            pressed_key = event.keyval - Gdk.KEY_KP_1
+            self.select_video(pressed_key)
         elif event.keyval == Gdk.KEY_Escape:
             VideoMixController.clear()
 
@@ -188,6 +191,10 @@ class VideoPreviewsController(object):
             self.a_btns[source_name].set_active(True)
         elif VideoMixController.video_b is None:
             self.b_btns[source_name].set_active(True)
+        else:
+            # clear and try again
+            VideoMixController.clear()
+            self.select_video(idx)
 
     def clear_video_selection(self):
         self.log.info("clear_video_selection")

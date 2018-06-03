@@ -62,9 +62,6 @@ class CompositionToolbarController(object):
         self.composite_btns[name] = btn
 
     def on_btn_toggled(self, btn):
-        if not btn.get_active():
-            return
-
         btn_name = btn.get_name()
         self.log.info('composition-mode activated: %s', btn_name)
         VideoMixController.composite_mode = btn_name

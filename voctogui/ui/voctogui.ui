@@ -49,7 +49,7 @@
             <property name="hexpand">True</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkRadioToolButton" id="composite-fullscreen">
+              <object class="GtkToolButton" id="composite-fullscreen">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Fullscreen</property>
@@ -62,13 +62,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRadioToolButton" id="composite-picture-in-picture">
+              <object class="GtkToolButton" id="composite-picture-in-picture">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Picture in Picture</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">img-composite-picture-in-picture</property>
-                <property name="group">composite-fullscreen</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -76,13 +75,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRadioToolButton" id="composite-side-by-side-equal">
+              <object class="GtkToolButton" id="composite-side-by-side-equal">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Side-by-side Equal</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">img-composite-side-by-side-equal</property>
-                <property name="group">composite-fullscreen</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -90,13 +88,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRadioToolButton" id="composite-side-by-side-preview">
+              <object class="GtkToolButton" id="composite-side-by-side-preview">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Side-by-side Preview</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">img-composite-side-by-side-preview</property>
-                <property name="group">composite-fullscreen</property>
               </object>
               <packing>
                 <property name="expand">False</property>
