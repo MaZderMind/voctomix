@@ -4,7 +4,7 @@ import math
 import os
 from configparser import NoOptionError
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, Gdk, GObject
 from lib.videodisplay import VideoDisplay
 import lib.connection as Connection
 
@@ -43,13 +43,17 @@ class VideoPreviewsController(object):
             height = int(width * 9 / 16)
             self.log.debug('Preview-Height calculated to %u', height)
 
-        # Accelerators
-        accelerators = Gtk.AccelGroup()
-        win.add_accel_group(accelerators)
+        self.win.connect("key-press-event", self.on_key_press_event)
 
         # create default non-visible buttons for this RadioGrouo
-        hidden_btn_group_a = Gtk.RadioButton()
-        hidden_btn_group_b = Gtk.RadioButton()
+        def create_hidden_button(channel):
+            btn = Gtk.RadioButton()
+            btn.connect('toggled', self.btn_toggled)
+            btn.set_name(channel + ' ' + '-')
+            return btn
+
+        self.hidden_btn_group_a = create_hidden_button('a')
+        self.hidden_btn_group_b = create_hidden_button('b')
 
         # Check if there is a fixed audio source configured.
         # If so, we will remove the volume sliders entirely
@@ -73,30 +77,18 @@ class VideoPreviewsController(object):
             player = VideoDisplay(video, port=13000 + idx,
                                   width=width, height=height)
 
-            uibuilder.find_widget_recursive(preview, 'label').set_label(source)
+            uibuilder.find_widget_recursive(preview, 'label').set_label('{} ({})'.format(source, idx + 1))
             btn_a = uibuilder.find_widget_recursive(preview, 'btn_a')
             btn_b = uibuilder.find_widget_recursive(preview, 'btn_b')
 
             btn_a.set_name("%c %u" % ('a', idx))
             btn_b.set_name("%c %u" % ('b', idx))
 
-            btn_a.join_group(hidden_btn_group_a)
-            btn_b.join_group(hidden_btn_group_b)
+            btn_a.join_group(self.hidden_btn_group_a)
+            btn_b.join_group(self.hidden_btn_group_b)
 
             btn_a.connect('toggled', self.btn_toggled)
             btn_b.connect('toggled', self.btn_toggled)
-
-            key, mod = Gtk.accelerator_parse('%u' % (idx + 1))
-            btn_a.add_accelerator('activate', accelerators,
-                                  key, mod, Gtk.AccelFlags.VISIBLE)
-            tooltip = Gtk.accelerator_get_label(key, mod)
-            btn_a.set_tooltip_text(tooltip)
-
-            key, mod = Gtk.accelerator_parse('<Ctrl>%u' % (idx + 1))
-            btn_b.add_accelerator('activate', accelerators,
-                                  key, mod, Gtk.AccelFlags.VISIBLE)
-            tooltip = Gtk.accelerator_get_label(key, mod)
-            btn_b.set_tooltip_text(tooltip)
 
             volume_slider = uibuilder.find_widget_recursive(preview,
                                                             'audio_level')
@@ -140,13 +132,12 @@ class VideoPreviewsController(object):
         self.log.debug('btn_toggled: %s', btn_name)
 
         channel, idx = btn_name.split(' ')[:2]
-        source_name = self.sources[int(idx)]
+        if idx == '-':
+            self.current_source[channel] = None
+        else:
+            source_name = self.sources[int(idx)]
+            self.current_source[channel] = source_name
 
-        if self.current_source[channel] == source_name:
-            self.log.info('video-channel %s already on %s',
-                          channel, source_name)
-            return
-        #
         # self.log.info('video-channel %s changed to %s', channel, source_name)
         # Connection.send('set_video_' + channel, source_name)
 
@@ -180,3 +171,22 @@ class VideoPreviewsController(object):
             GObject.signal_handler_block(slider, signal)
             slider.set_value(volume)
             GObject.signal_handler_unblock(slider, signal)
+
+    def on_key_press_event(self, widget, event):
+        if Gdk.KEY_1 <= event.keyval <= Gdk.KEY_9:
+            pressed_key = event.keyval - Gdk.KEY_1
+            self.select_video(pressed_key)
+        elif event.keyval == Gdk.KEY_Escape:
+            self.clear_video_selection()
+
+    def select_video(self, idx):
+        source_name = self.sources[idx]
+
+        if self.current_source['a'] is None:
+            self.a_btns[source_name].set_active(True)
+        elif self.current_source['b'] is None:
+            self.b_btns[source_name].set_active(True)
+
+    def clear_video_selection(self):
+        self.hidden_btn_group_a.set_active(True)
+        self.hidden_btn_group_b.set_active(True)
