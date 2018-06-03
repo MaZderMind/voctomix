@@ -31,7 +31,7 @@ class CompositionToolbarController(object):
 
         # Composites = F1-F4
         for idx, name in enumerate(composites):
-            self.add_composite_button(idx, name, 'F%u' % (idx + 1))
+            self.add_composite_button(name, 'F%u' % (idx + 1))
 
         # connect event-handler and request initial state
         Connection.on('composite_mode_and_video_status',
@@ -39,7 +39,7 @@ class CompositionToolbarController(object):
 
         Connection.send('get_composite_mode_and_video_status')
 
-    def add_composite_button(self, index, name, accel_key):
+    def add_composite_button(self, name, accel_key):
         key, mod = Gtk.accelerator_parse(accel_key)
 
         btn = self.uibuilder.find_widget_recursive(
