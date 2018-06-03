@@ -131,8 +131,8 @@ class VideoPreviewsController(object):
             self.b_btns[source] = btn_b
 
         # connect event-handler and request initial state
-        Connection.on('video_status', self.on_video_status)
-        Connection.send('get_video')
+        # Connection.on('video_status', self.on_video_status)
+        # Connection.send('get_video')
 
         if volume_control:
             Connection.on('audio_status', self.on_audio_status)
@@ -152,9 +152,9 @@ class VideoPreviewsController(object):
             self.log.info('video-channel %s already on %s',
                           channel, source_name)
             return
-
-        self.log.info('video-channel %s changed to %s', channel, source_name)
-        Connection.send('set_video_' + channel, source_name)
+        #
+        # self.log.info('video-channel %s changed to %s', channel, source_name)
+        # Connection.send('set_video_' + channel, source_name)
 
     def slider_changed(self, slider):
         slider_name = slider.get_name()
@@ -163,16 +163,16 @@ class VideoPreviewsController(object):
         volume = 10 ** (value / 20) if value > -20.0 else 0
         self.log.debug("slider_changed: {}: {:.4f}".format(source, volume))
         Connection.send('set_audio_volume {} {:.4f}'.format(source, volume))
-
-    def on_video_status(self, source_a, source_b):
-        self.log.info('on_video_status callback w/ sources: %s and %s',
-                      source_a, source_b)
-
-        self.current_source['a'] = source_a
-        self.current_source['b'] = source_b
-
-        self.a_btns[source_a].set_active(True)
-        self.b_btns[source_b].set_active(True)
+    #
+    # def on_video_status(self, source_a, source_b):
+    #     self.log.info('on_video_status callback w/ sources: %s and %s',
+    #                   source_a, source_b)
+    #
+    #     self.current_source['a'] = source_a
+    #     self.current_source['b'] = source_b
+    #
+    #     self.a_btns[source_a].set_active(True)
+    #     self.b_btns[source_b].set_active(True)
 
     def on_audio_status(self, *volumes):
         volumes_json = "".join(volumes)
