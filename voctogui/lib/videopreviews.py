@@ -47,8 +47,9 @@ class VideoPreviewsController(object):
         accelerators = Gtk.AccelGroup()
         win.add_accel_group(accelerators)
 
-        group_a = None
-        group_b = None
+        # create default non-visible buttons for this RadioGrouo
+        hidden_btn_group_a = Gtk.RadioButton()
+        hidden_btn_group_b = Gtk.RadioButton()
 
         # Check if there is a fixed audio source configured.
         # If so, we will remove the volume sliders entirely
@@ -79,15 +80,8 @@ class VideoPreviewsController(object):
             btn_a.set_name("%c %u" % ('a', idx))
             btn_b.set_name("%c %u" % ('b', idx))
 
-            if not group_a:
-                group_a = btn_a
-            else:
-                btn_a.join_group(group_a)
-
-            if not group_b:
-                group_b = btn_b
-            else:
-                btn_b.join_group(group_b)
+            btn_a.join_group(hidden_btn_group_a)
+            btn_b.join_group(hidden_btn_group_b)
 
             btn_a.connect('toggled', self.btn_toggled)
             btn_b.connect('toggled', self.btn_toggled)
