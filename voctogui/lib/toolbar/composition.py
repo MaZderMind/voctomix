@@ -25,20 +25,11 @@ class CompositionToolbarController(object):
             'side_by_side_preview'
         ]
 
-        sources = Config.getlist('mix', 'sources')
-
         self.composite_btns = {}
-        self.current_composition = None
 
         # Composites = F1-F4
         for idx, name in enumerate(composites):
             self.add_composite_button(name, 'F%u' % (idx + 1))
-
-        # connect event-handler and request initial state
-        Connection.on('composite_mode_and_video_status',
-                      self.on_composite_mode_and_video_status)
-
-        Connection.send('get_composite_mode_and_video_status')
 
     def add_composite_button(self, name, accel_key):
         key, mod = Gtk.accelerator_parse(accel_key)
@@ -66,11 +57,3 @@ class CompositionToolbarController(object):
         self.log.info('composition-mode activated: %s', btn_name)
         VideoMixController.composite_mode = btn_name
         VideoMixController.apply()
-
-    def on_composite_mode_and_video_status(self, mode, source_a, source_b):
-        self.log.info('composite_mode_and_video_status callback w/ '
-                      'mode: %s, source a: %s, source b: %s',
-                      mode, source_a, source_b)
-
-        self.current_composition = mode
-        self.composite_btns[mode].set_active(True)
